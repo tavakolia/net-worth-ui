@@ -3,11 +3,12 @@ import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import {connect} from "react-redux";
 import {updateData} from "./actions";
+import _ from "lodash";
 
 class Subsection extends Component {
     constructor(props) {
         super(props);
-        this.state = props.account;
+        this.state = _.cloneDeep(props.account);
     }
 
     columns = [{
@@ -26,15 +27,8 @@ class Subsection extends Component {
         return data;
     };
 
-    onEdit = (oldValue, newValue, row, column) => {
+    onEdit = () => {
         this.props.patchState(this.state);
-        // if(newValue !== oldValue) {
-        //     console.log("state", this.state);
-        //     const stateRow = _.find(this.state.accounts, account => account._id === row._id);
-        //     debugger;
-        //     this.setState();
-        // }
-        // console.log("newState", this.state);
     }
       
     render() {
@@ -61,10 +55,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         ...ownProps,
         patchState: (accounts) => {
-            // dispatch({
-            //     type: "UPDATE_SUBSECTION",
-            //     value: accounts
-            // });
+            console.log("accounts", accounts);
+            dispatch({
+                type: "UPDATE_SUBSECTION",
+                value: accounts
+            });
             dispatch(updateData());
         }
     };

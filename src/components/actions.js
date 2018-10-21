@@ -12,6 +12,7 @@ export function loadData() {
 export function updateData() {
     return (dispatch, getState) => {
         // dispatch({type: "SAVING"});
+        console.log("getState", getState());
         patchState(getState());
     }
 }
@@ -27,7 +28,7 @@ const patchState = async (state) => {
             body: JSON.stringify(state.netWorthReducer)
         });
         const response = await res.json();
-        console.log('Success:', JSON.stringify(response));
+        // console.log('Success:', JSON.stringify(response));
         return response;
     }
     catch (error) {

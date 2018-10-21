@@ -1,22 +1,11 @@
 import React, {Component} from "react";
 import Subsection from "./Subsection";
-import _ from "lodash";
+import {connect} from "react-redux";
 
 class Section extends Component {
-    getTotal() {
-        const {data} = this.props;
-        let total = 0;
-        const flat = _.flatMap(data, acc => acc.accounts);
-        _.forEach(flat, acc => {
-            if(_.isNumber(acc.value)) {
-                total += acc.value;
-            }
-        })
-        return total;
-    }
     render() {
-        const {data, header} = this.props;
-        const total = this.getTotal();
+        const {data, header, subTotal} = this.props;
+
         return(
             <div>
                 <div>{header}</div>
@@ -24,11 +13,19 @@ class Section extends Component {
                 <Subsection key={account._id} account={account} />
             )}
                 <div className='Section-footer'>
-                    Total {header}: {total}
+                    Total {header}: {subTotal}
                 </div>
             </div>
         );
     }
 }
 
-export default Section;
+const mapStateToProps = (state, ownProps) => {
+    const subTotalKey = `total${ownProps.header}`;
+    return {
+        ...ownProps,
+        subTotal: state.netWorthReducer[subTotalKey]
+    }
+}
+
+export default connect(mapStateToProps)(Section);

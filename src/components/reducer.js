@@ -39,17 +39,20 @@ const init = {
 const netWorthReducer = (state = init, action) => {
     switch (action.type) {
         case "UPDATE":
-            const subTotals = calculateSubTotals(action.value);
+            let subTotals = calculateSubTotals(action.value);
+            console.log("Update", state);
             return {
                 ...subTotals,
                 ...action.value
             };
         case "UPDATE_SUBSECTION":
-            const newData = updateSubSection(state, action.value);
-            return {
-                ...calculateSubTotals(newData),
-                ...newData
+            updateSubSection(state, action.value);
+            const newState = {
+                ...state,
+                ...calculateSubTotals(state)
             }
+            console.log("newState", newState);
+            return newState;
         default:
             return state;
     }
@@ -69,17 +72,21 @@ const getTotal = (data) => {
     let total = 0;
     const flat = _.flatMap(data, acc => acc.accounts);
     _.forEach(flat, acc => {
-        if(_.isNumber(acc.value)) {
-            total += acc.value;
-        }
+        total += parseInt(acc.value);
     })
     return total;
 }
 
 const updateSubSection = (state, account) => {
-    console.log("current state");
-    console.log("account", account);
-    debugger;
+    _.forEach(state.data, (section, key) => { 
+        const sectionKey = _.findKey(section, acc => acc._id === account._id);
+        debugger;
+        console.log("section", sectionKey);
+        if (sectionKey) {
+            state.data[key][sectionKey] = account;
+            return;
+        }
+    });
 }
 
 export default netWorthReducer;

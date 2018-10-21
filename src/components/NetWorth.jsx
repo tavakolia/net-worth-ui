@@ -20,7 +20,7 @@ class View extends Component {
                 <div>{status.status === "LOADING" ? "Loading..." : ""}</div>
                 <div className="App-header">Net Worth Calculator</div>
                 <Exchange currency={currency} />
-                <div>Net Worth: {netWorth}</div>
+                <div className="Net-Worth">Net Worth: {netWorth}</div>
                 <Section header="Assets" data={data.assets} />
                 <Section header="Liabilities" data={data.liabilities} />
             </div>
