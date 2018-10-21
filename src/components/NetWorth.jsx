@@ -13,14 +13,14 @@ class View extends Component {
     }
 
     render() {
-        const { data, currency } = this.props;
-        const { status } = this.props;
+        const { data, currency, status, netWorth } = this.props;
 
         return(
             <div className="App">
                 <div>{status.status === "LOADING" ? "Loading..." : ""}</div>
                 <div className="App-header">Net Worth Calculator</div>
                 <Exchange currency={currency} />
+                <div>Net Worth: {netWorth}</div>
                 <Section header="Assets" data={data.assets} />
                 <Section header="Liabilities" data={data.liabilities} />
             </div>
@@ -33,7 +33,8 @@ const mapStateToProps = (state, ownProps) => {
         ...ownProps,
         status: state.statusReducer,
         data: state.netWorthReducer.data,
-        currency: state.netWorthReducer.currency
+        currency: state.netWorthReducer.currency,
+        netWorth: state.netWorthReducer.netWorth
     };
 };
 

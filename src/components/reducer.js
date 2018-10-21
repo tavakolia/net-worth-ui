@@ -1,3 +1,4 @@
+import _ from "lodash";
 
 const init = {
     data: {
@@ -8,15 +9,10 @@ const init = {
                         _id: 1,
                         name: "Chequing",
                         value: 660
-                    },
-                    {
-                        _id: 2,
-                        name: "Bank",
-                        value: 1100
                     }
                 ],
                 _id: 5,
-                accountType: "MaybeCash"
+                accountType: "Cash"
             }
         ],
         liabilities: [
@@ -31,21 +27,59 @@ const init = {
                 _id: 4,
                 accountType: "LT Debts"
             }
-        ]
+        ],
+        totalAssets: 660,
+        totalLiabilities: 100,
+        netWorth: 560
     },
-    _id: "5bcacfbc1768f834f754d2b2",
-    currency: "USD",
-    updatedAt: "2018-10-20T17:47:27.251Z",
-    created_at: "2018-10-20T17:47:27.251Z"
+    _id: "6",
+    currency: "USD"
 };
 
 const netWorthReducer = (state = init, action) => {
     switch (action.type) {
         case "UPDATE":
-            return action.value;
+            const subTotals = calculateSubTotals(action.value);
+            return {
+                ...subTotals,
+                ...action.value
+            };
+        case "UPDATE_SUBSECTION":
+            const newData = updateSubSection(state, action.value);
+            return {
+                ...calculateSubTotals(newData),
+                ...newData
+            }
         default:
             return state;
     }
 };
+
+const calculateSubTotals = (state) => {
+    const totalAssets = getTotal(state.data.assets),
+        totalLiabilities = getTotal(state.data.liabilities);
+    return {
+        totalAssets,
+        totalLiabilities,
+        netWorth: totalAssets - totalLiabilities
+    }
+}
+
+const getTotal = (data) => {
+    let total = 0;
+    const flat = _.flatMap(data, acc => acc.accounts);
+    _.forEach(flat, acc => {
+        if(_.isNumber(acc.value)) {
+            total += acc.value;
+        }
+    })
+    return total;
+}
+
+const updateSubSection = (state, account) => {
+    console.log("current state");
+    console.log("account", account);
+    debugger;
+}
 
 export default netWorthReducer;

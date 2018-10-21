@@ -17,17 +17,14 @@ export function updateData() {
 }
 
 const patchState = async (state) => {
-    console.log(state);
-    const id = '5bcacf3b1768f834f754d2b1';
-    const url = baseURL + '/calc/' + id;
-    
+    const url = baseURL + '/calc/' + state.netWorthReducer._id;
     try {
         const res = await fetch(url, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(state.data)
+            body: JSON.stringify(state.netWorthReducer)
         });
         const response = await res.json();
         console.log('Success:', JSON.stringify(response));

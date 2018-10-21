@@ -1,8 +1,15 @@
 import React, {Component} from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from 'react-bootstrap-table2-editor';
+import {connect} from "react-redux";
+import {updateData} from "./actions";
 
 class Subsection extends Component {
+    constructor(props) {
+        super(props);
+        this.state = props.account;
+    }
+
     columns = [{
         dataField: 'name',
         text: 'Account'
@@ -19,13 +26,20 @@ class Subsection extends Component {
         return data;
     };
 
-    onEdit = (oldValue, newValue, row, column) => { console.log("newVal", newValue);}
+    onEdit = (oldValue, newValue, row, column) => {
+        this.props.patchState(this.state);
+        // if(newValue !== oldValue) {
+        //     console.log("state", this.state);
+        //     const stateRow = _.find(this.state.accounts, account => account._id === row._id);
+        //     debugger;
+        //     this.setState();
+        // }
+        // console.log("newState", this.state);
+    }
       
     render() {
-        const {account: {accountType: header, accounts: data}} = this.props;
+        const {accountType: header, accounts: data} = this.state;
         // const data = this.addHeaderAndFooter(this.products);
-
-        // console.log("subsection data", data);
 
         return(
             <BootstrapTable
@@ -43,4 +57,17 @@ class Subsection extends Component {
     }
 }
 
-export default Subsection;
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        ...ownProps,
+        patchState: (accounts) => {
+            // dispatch({
+            //     type: "UPDATE_SUBSECTION",
+            //     value: accounts
+            // });
+            dispatch(updateData());
+        }
+    };
+};
+
+export default connect(undefined, mapDispatchToProps)(Subsection);
