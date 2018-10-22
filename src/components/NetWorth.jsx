@@ -3,7 +3,7 @@ import 'react-table/react-table.css';
 import Section from "./Section";
 import {connect} from "react-redux";
 import {loadData} from "./actions";
-import Exchange from "./Exchange";
+import Exchange from "./exchange/Exchange";
 
 class View extends Component {
     constructor(props) {
@@ -14,6 +14,8 @@ class View extends Component {
 
     render() {
         const { data, currency, status, netWorth } = this.props;
+        console.log("data", data);
+        debugger;
 
         return(
             <div className="App">

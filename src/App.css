@@ -19,8 +19,16 @@
   color: white;
 }
 
+.table {
+  margin-bottom: 0;
+}
+
+.Section {
+  margin-top: 15px;
+}
+
 .Section-footer {
-  margin-bottom: 10px;
+  margin-top: 10px;
   font-weight: bold;
 }
 

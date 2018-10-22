@@ -5,9 +5,10 @@ import {connect} from "react-redux";
 class Section extends Component {
     render() {
         const {data, header, subTotal} = this.props;
+        console.log("re-render", data);
 
         return(
-            <div>
+            <div className="Section">
                 <div>{header}</div>
             {data.map(account => 
                 <Subsection key={account._id} account={account} />

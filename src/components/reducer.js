@@ -38,25 +38,51 @@ const init = {
 
 const netWorthReducer = (state = init, action) => {
     switch (action.type) {
-        case "UPDATE":
-            let subTotals = calculateSubTotals(action.value);
-            console.log("Update", state);
-            return {
-                ...subTotals,
-                ...action.value
-            };
         case "UPDATE_SUBSECTION":
             updateSubSection(state, action.value);
             const newState = {
                 ...state,
                 ...calculateSubTotals(state)
             }
-            console.log("newState", newState);
             return newState;
+        case "UPDATE":
+            let subTotals = calculateSubTotals(action.value);
+            return {
+                ...subTotals,
+                ...action.value
+            };
+        case "EXCHANGE_CURRENCY":
+            const newData = exchangeCurrency(state, action.value);
+            console.log('newData', newData);
+            debugger;
+            subTotals = calculateSubTotals(newData);
+            return {
+                ...subTotals,
+                ...newData
+            }
         default:
             return state;
     }
 };
+
+const exchangeCurrency = (state, exchange) => {
+    return {
+        data: exchangeValues(state.data, exchange.rate),
+        currency: exchange.currency
+    };
+}
+
+const exchangeValues = (data, rate) => {
+    _.forEach(data, (section) => { 
+        _.forEach(section, subsection => {
+            _.forEach(subsection.accounts, account => {
+                    account.value *= (1/rate);
+                })
+            })
+    });
+    return data;
+}
+
 
 const calculateSubTotals = (state) => {
     const totalAssets = getTotal(state.data.assets),
@@ -80,8 +106,6 @@ const getTotal = (data) => {
 const updateSubSection = (state, account) => {
     _.forEach(state.data, (section, key) => { 
         const sectionKey = _.findKey(section, acc => acc._id === account._id);
-        debugger;
-        console.log("section", sectionKey);
         if (sectionKey) {
             state.data[key][sectionKey] = account;
             return;

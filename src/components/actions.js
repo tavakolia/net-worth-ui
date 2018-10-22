@@ -1,7 +1,7 @@
 const baseURL = 'http://localhost:3030';
 
 export function loadData() {
-    return (dispatch, getState) => {
+    return (dispatch) => {
         getInitial().then((res) => {
             dispatch({type: "UPDATE", value: res});
             dispatch({type: "LOAD_SUCCESS"});
@@ -12,8 +12,8 @@ export function loadData() {
 export function updateData() {
     return (dispatch, getState) => {
         // dispatch({type: "SAVING"});
-        console.log("getState", getState());
-        patchState(getState());
+        // patchState(getState()).then(res => console.log("newState", res));
+        patchState(getState()).then(res => dispatch({type: "UPDATE", value: res}));
     }
 }
 
@@ -28,7 +28,6 @@ const patchState = async (state) => {
             body: JSON.stringify(state.netWorthReducer)
         });
         const response = await res.json();
-        // console.log('Success:', JSON.stringify(response));
         return response;
     }
     catch (error) {
@@ -57,10 +56,10 @@ const getInitial = async () =>
     }
 };
 
-const update = () => {
+// const update = () => {
 
-}
+// }
 
-const changeCurrency = () => {
+// const changeCurrency = () => {
 
-}
+// }

@@ -4,21 +4,21 @@ import cellEditFactory from 'react-bootstrap-table2-editor';
 import {connect} from "react-redux";
 import {updateData} from "./actions";
 import _ from "lodash";
+import {Glyphicon, Button} from "react-bootstrap";
 
 class Subsection extends Component {
     constructor(props) {
         super(props);
         this.state = _.cloneDeep(props.account);
+        this.columns = [{
+            dataField: 'name',
+            text: props.account.accountType
+          }, {
+            dataField: 'value',
+            text: 'Amount'
+          }
+        ];
     }
-
-    columns = [{
-        dataField: 'name',
-        text: 'Account'
-      }, {
-        dataField: 'value',
-        text: 'Amount'
-      }
-    ];
 
     addHeaderAndFooter = (data) => {
         const {header} = this.props;
@@ -30,23 +30,42 @@ class Subsection extends Component {
     onEdit = () => {
         this.props.patchState(this.state);
     }
+
+    handleAddRow = () => {
+        console.log("cur state", this.state);
+        const templateRow = {name: "New Account", value: 0};
+        const temp = {
+            accounts: {
+                ...this.state.accounts.push(templateRow)
+            },
+            ...this.state
+        }
+        this.setState(temp);
+    }
       
     render() {
-        const {accountType: header, accounts: data} = this.state;
-        // const data = this.addHeaderAndFooter(this.products);
+        const {accounts: data} = this.state;
+        console.log("subsection render", this.props);
+        // const {accounts: data} = this.props.account;
 
         return(
-            <BootstrapTable
-                keyField="_id"
-                data={data}
-                columns={ this.columns }
-                cellEdit={ cellEditFactory({
-                    mode: 'click',
-                    blurToSave: true,
-                    nonEditableRows: () => [0],
-                    afterSaveCell: this.onEdit
-                }) }
-            />
+            <div>
+                <BootstrapTable
+                    keyField="_id"
+                    data={data}
+                    columns={ this.columns }
+                    bordered={ false }
+                    cellEdit={ cellEditFactory({
+                        mode: 'click',
+                        blurToSave: true,
+                        nonEditableRows: () => [0],
+                        afterSaveCell: this.onEdit
+                    }) }
+                />
+                <Button bsSize="small" onClick={this.handleAddRow}>
+                    <Glyphicon glyph="plus"/>
+                </Button>
+            </div>
         );
     }
 }
@@ -55,7 +74,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         ...ownProps,
         patchState: (accounts) => {
-            console.log("accounts", accounts);
             dispatch({
                 type: "UPDATE_SUBSECTION",
                 value: accounts
@@ -65,4 +83,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     };
 };
 
-export default connect(undefined, mapDispatchToProps)(Subsection);
+const mapStateToProps = (state, ownProps) => {
+    const header = ownProps.account.accountType;
+    return {
+        ...ownProps,
+        data: state
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Subsection);
