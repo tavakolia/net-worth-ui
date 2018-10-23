@@ -1,65 +1,67 @@
 import _ from "lodash";
+import {fromJS} from "immutable";
 
-const init = {
-    data: {
-        assets: [
-            {
-                accounts: [
-                    {
-                        _id: 1,
-                        name: "Chequing",
-                        value: 660
-                    }
-                ],
-                _id: 5,
-                accountType: "Cash"
-            }
-        ],
-        liabilities: [
-            {
-                accounts: [
-                    {
-                        _id: 3,
-                        name: "Debt",
-                        value: 100
-                    }
-                ],
-                _id: 4,
-                accountType: "LT Debts"
-            }
-        ],
-        totalAssets: 660,
+const init = () => {
+    return fromJS(
+    {
+        data: {
+            assets: [
+                {
+                    accounts: [
+                        {
+                            _id: 1,
+                            name: "Chequing",
+                            value: 200
+                        }
+                    ],
+                    _id: 5,
+                    accountType: "Cash"
+                }
+            ],
+            liabilities: [
+                {
+                    accounts: [
+                        {
+                            _id: 3,
+                            name: "Debt",
+                            value: 100
+                        }
+                    ],
+                    _id: 4,
+                    accountType: "Long-Term Debts"
+                }
+            ]
+        },
+        totalAssets: 200,
         totalLiabilities: 100,
-        netWorth: 560
-    },
-    _id: "6",
-    currency: "USD"
+        netWorth: 100,
+        _id: "6",
+        currency: "USD"
+    });
 };
 
-const netWorthReducer = (state = init, action) => {
+const netWorthReducer = (state = init(), action) => {
     switch (action.type) {
         case "UPDATE_SUBSECTION":
-            updateSubSection(state, action.value);
+            const updatedSubsection = updateSubSection(state.toJS(), action.value);
             const newState = {
-                ...state,
-                ...calculateSubTotals(state)
+                ...updatedSubsection,
+                ...calculateSubTotals(state.toJS())
             }
-            return newState;
+            return state.merge(newState);
         case "UPDATE":
             let subTotals = calculateSubTotals(action.value);
-            return {
+            const updatedState = state.merge({
                 ...subTotals,
                 ...action.value
-            };
+            });
+            return updatedState;
         case "EXCHANGE_CURRENCY":
-            const newData = exchangeCurrency(state, action.value);
-            console.log('newData', newData);
-            debugger;
-            subTotals = calculateSubTotals(newData);
-            return {
-                ...subTotals,
+            const newData = exchangeCurrency(state.toJS(), action.value);
+            return state.merge({
+                ...calculateSubTotals(newData),
                 ...newData
-            }
+            })
         default:
             return state;
     }
@@ -76,7 +78,7 @@ const exchangeValues = (data, rate) => {
     _.forEach(data, (section) => { 
         _.forEach(section, subsection => {
             _.forEach(subsection.accounts, account => {
-                    account.value *= (1/rate);
+                    account.value *= rate;
                 })
             })
     });
@@ -103,14 +105,17 @@ const getTotal = (data) => {
     return total;
 }
 
-const updateSubSection = (state, account) => {
-    _.forEach(state.data, (section, key) => { 
-        const sectionKey = _.findKey(section, acc => acc._id === account._id);
-        if (sectionKey) {
-            state.data[key][sectionKey] = account;
+const updateSubSection = (state, newAccount) => {
+    _.forEach(state.data, (section) => { 
+        _.forEach(section, subsection => {
+            const oldAccount = _.find(subsection.accounts, account => account._id === newAccount._id);
+            if (oldAccount) {
+                _.assign(oldAccount, newAccount);
+            }
             return;
-        }
+        })
     });
+    return state;
 }
 
 export default netWorthReducer;

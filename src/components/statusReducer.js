@@ -1,8 +1,12 @@
-const init = {
-    status: "STALE"
-}
+import {Map} from "immutable";
 
-const statusReducer = (state = init, action) => {
+const init = () => {
+    return new Map({
+        status: "STALE"
+    })
+};
+
+const statusReducer = (state = init(), action) => {
     switch (action.type) {
         case "LOAD_INITIAL":
             return {status: "LOADING"};

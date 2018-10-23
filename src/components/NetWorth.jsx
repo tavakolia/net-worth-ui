@@ -14,8 +14,6 @@ class View extends Component {
 
     render() {
         const { data, currency, status, netWorth } = this.props;
-        console.log("data", data);
-        debugger;
 
         return(
             <div className="App">
@@ -23,8 +21,8 @@ class View extends Component {
                 <div className="App-header">Net Worth Calculator</div>
                 <Exchange currency={currency} />
                 <div className="Net-Worth">Net Worth: {netWorth}</div>
-                <Section header="Assets" data={data.assets} />
-                <Section header="Liabilities" data={data.liabilities} />
+                <Section header="Assets" data={data.get('assets')} />
+                <Section header="Liabilities" data={data.get('liabilities')} />
             </div>
         );
     };
@@ -34,9 +32,9 @@ const mapStateToProps = (state, ownProps) => {
     return {
         ...ownProps,
         status: state.statusReducer,
-        data: state.netWorthReducer.data,
-        currency: state.netWorthReducer.currency,
-        netWorth: state.netWorthReducer.netWorth
+        data: state.netWorthReducer.get('data'),
+        currency: state.netWorthReducer.get('currency'),
+        netWorth: state.netWorthReducer.get('netWorth')
     };
 };
 

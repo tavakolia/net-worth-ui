@@ -3,13 +3,12 @@ import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import {connect} from "react-redux";
 import {updateData} from "./actions";
-import _ from "lodash";
 import {Glyphicon, Button} from "react-bootstrap";
 
 class Subsection extends Component {
     constructor(props) {
         super(props);
-        this.state = _.cloneDeep(props.account);
+        // const {header} = props.account.accountType;
         this.columns = [{
             dataField: 'name',
             text: props.account.accountType
@@ -20,6 +19,10 @@ class Subsection extends Component {
         ];
     }
 
+    // static getDerivedStateFromProps(props, state) {
+    //     console.log("derived");
+    // }
+
     addHeaderAndFooter = (data) => {
         const {header} = this.props;
         data.unshift({id: 0, name: header});
@@ -27,12 +30,11 @@ class Subsection extends Component {
         return data;
     };
 
-    onEdit = () => {
-        this.props.patchState(this.state);
+    onEdit = (_oldValue, _newValue, row) => {
+        this.props.patchState(row);
     }
 
     handleAddRow = () => {
-        console.log("cur state", this.state);
         const templateRow = {name: "New Account", value: 0};
         const temp = {
             accounts: {
@@ -44,9 +46,9 @@ class Subsection extends Component {
     }
       
     render() {
-        const {accounts: data} = this.state;
-        console.log("subsection render", this.props);
-        // const {accounts: data} = this.props.account;
+        //const {accounts: data} = this.state;
+
+        const {accounts: data} = this.props.account;
 
         return(
             <div>
@@ -73,10 +75,10 @@ class Subsection extends Component {
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         ...ownProps,
-        patchState: (accounts) => {
+        patchState: (row) => {
             dispatch({
                 type: "UPDATE_SUBSECTION",
-                value: accounts
+                value: row
             });
             dispatch(updateData());
         }
@@ -84,7 +86,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = (state, ownProps) => {
-    const header = ownProps.account.accountType;
+    // const header = ownProps.account.accountType;
     return {
         ...ownProps,
         data: state

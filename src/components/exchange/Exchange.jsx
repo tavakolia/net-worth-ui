@@ -11,7 +11,7 @@ class Exchange extends Component {
 
     render() {
         const {currency, rates} = this.props;
-        console.log("props", this.props);
+
         return(
             <div>
                 <div>Home: {currency}</div>
