@@ -61,6 +61,7 @@ const netWorthReducer = (state = init(), action) => {
         case "UPDATE":
             let subTotals = calculateSubTotals(action.value);
             const updatedState = state.merge({
+                // data: exchangeValues(action.value.data, 1),
                 ...subTotals,
                 ...action.value
             });
@@ -87,7 +88,8 @@ const exchangeValues = (data, rate) => {
     _.forEach(data, (section) => { 
         _.forEach(section, subsection => {
             _.forEach(subsection.accounts, account => {
-                    account.value *= rate;
+                    account.homeValue = account.homeValue || account.value;
+                    account.value = account.homeValue * rate;
                 })
             })
     });

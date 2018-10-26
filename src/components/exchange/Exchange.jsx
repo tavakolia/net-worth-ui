@@ -25,8 +25,9 @@ class Exchange extends Component {
                     return (<MenuItem
                                 active={key === currency ? true : false}
                                 key={key}
-                                eventKey={key}
-                            >{key}</MenuItem>);
+                                eventKey={key}>
+                                {key}
+                            </MenuItem>);
                 })}
                 </DropdownButton>
             </div>
@@ -36,8 +37,9 @@ class Exchange extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        rates: state.exchangeReducer.get('rates'),
+        rates: state.exchangeReducer.get('rates').toJS(),
         homeCurrency: state.exchangeReducer.get('base'),
+        currency: state.netWorthReducer.get('currency'),
         ...ownProps
     }
 };

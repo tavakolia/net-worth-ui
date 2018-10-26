@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import 'react-table/react-table.css';
 import NetWorth from './components/NetWorth';
 import store from "./redux/store";
 import {Provider} from "react-redux";

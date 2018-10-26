@@ -1,22 +1,27 @@
 /*
  * action types
  */
-export const SET_RATES = "SET_RATES";
-export const SET_CURRENCY = "SET_CURRENCY";
+export const SET_RATES = "SET_RATES",
+    SET_CURRENCY = "SET_CURRENCY";
 
 const baseURL = 'http://localhost:3030/rates';
 
 /*
  * action creators
  */
-export function setRates(rates) {
-    return {
-        type: SET_RATES,
-        value: rates
-    };
+export const setRates = () => {
+    return async (dispatch, getState) => 
+    {
+        const baseCurrency = getState().netWorthReducer.get('currency'),
+            res = await fetchRates(baseCurrency);
+        dispatch({
+            type: SET_CURRENCY,
+            value: res
+        });
+    }
 }
 
-export function updateRates(baseCur) {
+export const updateRates = (baseCur) => {
     return async (dispatch, _getState) => {
         const response = await fetchRates(baseCur);
         if (response.error) {

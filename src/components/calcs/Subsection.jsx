@@ -7,25 +7,24 @@ import {Glyphicon, Button} from "react-bootstrap";
 import _ from "lodash";
 
 class Subsection extends Component {
-    constructor(props) {
-        super(props);
-        const {accountType: header} = props.account;
-        this.columns = [
+    getColumns = () => {
+        const {editable, account: {accountType: header}} = this.props;
+
+        return ([
             {
                 dataField: 'name',
-                text: header
+                text: header,
+                editable
             }, {
                 dataField: 'value',
-                text: 'Amount'
+                text: 'Amount',
+                editable
             }
-        ];
+        ]);
     }
 
-    // static getDerivedStateFromProps(props, state) {
-    //     console.log("derived");
-    // }
-
     onEdit = (_oldValue, _newValue, row) => {
+        row.homeValue = row.value;
         if(_.isString(row._id) && row._id.startsWith("temp")) {
             row = _.omit(row, '_id');
         }
@@ -39,15 +38,13 @@ class Subsection extends Component {
       
     render() {
         const {accounts: data} = this.props.account;
-        const {homeCurrency, currency} = this.props;
-        console.log("cur", currency, homeCurrency);
 
         return(
             <div>
                 <BootstrapTable
                     keyField="_id"
                     data={data}
-                    columns={ this.columns }
+                    columns={ this.getColumns() }
                     bordered={ false }
                     cellEdit={ cellEditFactory({
                         mode: 'click',
@@ -85,8 +82,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        homeCurrency: state.exchangeReducer.get('base'),
-        currency: state.netWorthReducer.get('currency'),
+        editable: state.exchangeReducer.get('base') === state.netWorthReducer.get('currency'),
         ...ownProps
     };
 }

@@ -1,12 +1,13 @@
 import React, {Component} from "react";
-import 'react-table/react-table.css';
 import {connect} from "react-redux";
 import {loadData} from "./calcs/actions";
 import Exchange from "./exchange/Exchange";
 import Status from "./status/Status";
+import {changeStatus, LOADING} from "./status/actions";
+
 import Calcs from "./calcs/Calcs";
 
-class View extends Component {
+class NetWorth extends Component {
     constructor(props) {
         super(props);
         this.state = {data: props.data};
@@ -14,38 +15,25 @@ class View extends Component {
     }
 
     render() {
-        const {currency} = this.props;
-
         return(
             <div className="App">
-                <Status />
                 <div className="App-header">Net Worth Calculator</div>
-                <Exchange currency={currency} />
+                <Status />
+                <Exchange />
                 <Calcs />
             </div>
         );
     };
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        ...ownProps,
-        currency: state.netWorthReducer.get('currency'),
-    };
-};
-
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         ...ownProps,
         loadDataOption: () => {
-            dispatch({
-                type: "LOAD_INITIAL",
-            });
+            dispatch(changeStatus(LOADING));
             dispatch(loadData());
         }
     };
 };
 
-const NetWorth = connect(mapStateToProps, mapDispatchToProps)(View)
-
-export default NetWorth;
+export default connect(undefined, mapDispatchToProps)(NetWorth);
