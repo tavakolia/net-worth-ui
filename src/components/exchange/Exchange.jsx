@@ -6,22 +6,22 @@ import _ from "lodash";
 class Exchange extends Component {
     changeCurrency = (event) => {
         const {updateValues, rates} = this.props;
-        updateValues({rate: rates.rates[event], currency: event});
+        updateValues({rate: rates[event], currency: event});
     }
 
     render() {
-        const {currency, rates} = this.props;
+        const {currency, homeCurrency, rates} = this.props;
 
         return(
             <div>
-                <div>Home: {currency}</div>
+                <div>Home: {homeCurrency}</div>
                 <DropdownButton
                     title="Currency"
                     onSelect={this.changeCurrency}
                     key={1}
                     id={`dropdown-basic-${1}`}
                 >
-                {_.keys(rates.rates).map((key, index)=> {
+                {_.keys(rates).map((key, index)=> {
                     return (<MenuItem
                                 active={key === currency ? true : false}
                                 key={key}
@@ -36,7 +36,8 @@ class Exchange extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        rates: state.exchangeReducer,
+        rates: state.exchangeReducer.get('rates'),
+        homeCurrency: state.exchangeReducer.get('base'),
         ...ownProps
     }
 };

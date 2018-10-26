@@ -1,9 +1,10 @@
 import React, {Component} from "react";
 import 'react-table/react-table.css';
-import Section from "./Section";
 import {connect} from "react-redux";
-import {loadData} from "./actions";
+import {loadData} from "./calcs/actions";
 import Exchange from "./exchange/Exchange";
+import Status from "./status/Status";
+import Calcs from "./calcs/Calcs";
 
 class View extends Component {
     constructor(props) {
@@ -13,16 +14,14 @@ class View extends Component {
     }
 
     render() {
-        const { data, currency, status, netWorth } = this.props;
+        const {currency} = this.props;
 
         return(
             <div className="App">
-                <div>{status.status === "LOADING" ? "Loading..." : ""}</div>
+                <Status />
                 <div className="App-header">Net Worth Calculator</div>
                 <Exchange currency={currency} />
-                <div className="Net-Worth">Net Worth: {netWorth}</div>
-                <Section header="Assets" data={data.get('assets')} />
-                <Section header="Liabilities" data={data.get('liabilities')} />
+                <Calcs />
             </div>
         );
     };
@@ -31,10 +30,7 @@ class View extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ...ownProps,
-        status: state.statusReducer,
-        data: state.netWorthReducer.get('data'),
         currency: state.netWorthReducer.get('currency'),
-        netWorth: state.netWorthReducer.get('netWorth')
     };
 };
 

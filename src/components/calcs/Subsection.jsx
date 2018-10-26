@@ -4,18 +4,20 @@ import cellEditFactory from 'react-bootstrap-table2-editor';
 import {connect} from "react-redux";
 import {updateData} from "./actions";
 import {Glyphicon, Button} from "react-bootstrap";
+import _ from "lodash";
 
 class Subsection extends Component {
     constructor(props) {
         super(props);
-        // const {header} = props.account.accountType;
-        this.columns = [{
-            dataField: 'name',
-            text: props.account.accountType
-          }, {
-            dataField: 'value',
-            text: 'Amount'
-          }
+        const {accountType: header} = props.account;
+        this.columns = [
+            {
+                dataField: 'name',
+                text: header
+            }, {
+                dataField: 'value',
+                text: 'Amount'
+            }
         ];
     }
 
@@ -23,32 +25,22 @@ class Subsection extends Component {
     //     console.log("derived");
     // }
 
-    addHeaderAndFooter = (data) => {
-        const {header} = this.props;
-        data.unshift({id: 0, name: header});
-        data.push({id: 100, name: `Total ${header}`});
-        return data;
-    };
-
     onEdit = (_oldValue, _newValue, row) => {
+        if(_.isString(row._id) && row._id.startsWith("temp")) {
+            row = _.omit(row, '_id');
+        }
         this.props.patchState(row);
     }
 
     handleAddRow = () => {
-        const templateRow = {name: "New Account", value: 0};
-        const temp = {
-            accounts: {
-                ...this.state.accounts.push(templateRow)
-            },
-            ...this.state
-        }
-        this.setState(temp);
+        const {addAccount, account} = this.props;
+        addAccount(account._id);
     }
       
     render() {
-        //const {accounts: data} = this.state;
-
         const {accounts: data} = this.props.account;
+        const {homeCurrency, currency} = this.props;
+        console.log("cur", currency, homeCurrency);
 
         return(
             <div>
@@ -64,7 +56,7 @@ class Subsection extends Component {
                         afterSaveCell: this.onEdit
                     }) }
                 />
-                <Button bsSize="small" onClick={this.handleAddRow}>
+                <Button bsSize="xsmall" onClick={this.handleAddRow}>
                     <Glyphicon glyph="plus"/>
                 </Button>
             </div>
@@ -81,16 +73,22 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 value: row
             });
             dispatch(updateData());
+        },
+        addAccount: (id) => {
+            dispatch({
+                type: "ADD_ACCOUNT",
+                value: id
+            })
         }
     };
 };
 
 const mapStateToProps = (state, ownProps) => {
-    // const header = ownProps.account.accountType;
     return {
-        ...ownProps,
-        data: state
-    }
+        homeCurrency: state.exchangeReducer.get('base'),
+        currency: state.netWorthReducer.get('currency'),
+        ...ownProps
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Subsection);

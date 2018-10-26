@@ -36,12 +36,21 @@ const init = () => {
         totalLiabilities: 100,
         netWorth: 100,
         _id: "6",
-        currency: "USD"
+        currency: "GBP"
     });
 };
 
+const templateAccount = {
+    name: "New Account",
+    value: 0
+}
+
 const netWorthReducer = (state = init(), action) => {
     switch (action.type) {
+        case "ADD_ACCOUNT":
+            return state.merge({
+                ...addTemplateAccount(state.toJS(), action.value)
+            })
         case "UPDATE_SUBSECTION":
             const updatedSubsection = updateSubSection(state.toJS(), action.value);
             const newState = {
@@ -85,6 +94,11 @@ const exchangeValues = (data, rate) => {
     return data;
 }
 
+const addTemplateAccount = (state, id) => {
+    const account = findAccount(state, id);
+    account.accounts.push(templateAccount);
+    return state;
+}
 
 const calculateSubTotals = (state) => {
     const totalAssets = getTotal(state.data.assets),
@@ -93,6 +107,19 @@ const calculateSubTotals = (state) => {
         totalAssets,
         totalLiabilities,
         netWorth: totalAssets - totalLiabilities
+    }
+}
+
+const findAccount = (data, id) => {
+    const accountTypes = _.toArray(data.data);
+    for (let i=0; i < accountTypes.length; i++) {
+        const accountType = accountTypes[i];
+        for(let j=0; j < accountType.length; j++) {
+            const subsection = accountType[j];
+            if(id === subsection._id) {
+                return subsection;
+            }
+        }
     }
 }
 

@@ -27,6 +27,11 @@
   margin-top: 15px;
 }
 
+.Section-header {
+  color: green;
+  font-weight: bold;
+}
+
 .Section-footer {
   margin-top: 10px;
   font-weight: bold;

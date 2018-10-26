@@ -1,16 +1,21 @@
+import {SET_CURRENCY, SET_RATES, updateRates} from "../exchange/actions";
+
 const baseURL = 'http://localhost:3030';
 
 export function loadData() {
     return async (dispatch) => {
         const response = await getInitial()
         dispatch({type: "UPDATE", value: response});
+        dispatch({type: SET_CURRENCY, value: response.currency})
+        updateRates(response.currency);
+        dispatch({type: SET_RATES, value: response.currency})
         dispatch({type: "LOAD_SUCCESS"});
     }
 }
 
 export function updateData() {
     return async (dispatch, getState) => {
-        dispatch({type: "SAVING"});
+        // dispatch({type: "SAVING"});
         const response = await patchState(getState());
         if (response.error) {
             dispatch({type: "ERROR", value: response.error})
@@ -21,15 +26,14 @@ export function updateData() {
 const patchState = async (state) => {
     const url = baseURL + '/calc/' + state.netWorthReducer.get('_id');
     try {
-        const res = await fetch(url, {
+        const response = await fetch(url, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(state.netWorthReducer.toJS())
         });
-        const response = await res.json();
-        return response;
+        return response.json();
     }
     catch (error) {
         console.error('Error saving:', error);
