@@ -1,11 +1,7 @@
-.App {
+.App-content {
   text-align: left;
-  margin: 10px;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+  margin: 0 auto;
+  width: 800px;
 }
 
 .App-header {
@@ -17,10 +13,19 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  width: 100%;
 }
 
 .table {
   margin-bottom: 0;
+}
+
+.Values {
+  width: 50%;
+}
+
+.Names {
+  width: 50%;
 }
 
 .Section {

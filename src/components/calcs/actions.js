@@ -45,7 +45,7 @@ const patchState = async (dispatch, state) => {
 
 const getInitial = async () => 
 {
-    const url = baseURL + "/exchange/1";
+    const url = baseURL + "/lastCalc";
     try {
         const response = await fetch(url, {
             method: 'GET',

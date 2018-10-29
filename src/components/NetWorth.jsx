@@ -18,9 +18,11 @@ class NetWorth extends Component {
         return(
             <div className="App">
                 <div className="App-header">Net Worth Calculator</div>
-                <Status />
-                <Exchange />
-                <Calcs />
+                <div className="App-content">
+                    <Status />
+                    <Exchange />
+                    <Calcs />
+                </div>
             </div>
         );
     };

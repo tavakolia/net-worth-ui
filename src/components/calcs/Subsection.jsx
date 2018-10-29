@@ -14,11 +14,13 @@ class Subsection extends Component {
             {
                 dataField: 'name',
                 text: header,
-                editable
+                editable,
+                classes: () => 'Names'
             }, {
                 dataField: 'value',
                 text: 'Amount',
-                editable
+                editable,
+                classes: () => 'Values'
             }
         ]);
     }

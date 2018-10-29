@@ -1,6 +1,8 @@
 import _ from "lodash";
 import {fromJS} from "immutable";
 
+const ROUNDING_DECIMALS = 2;
+
 const init = () => {
     return fromJS(
     {
@@ -89,7 +91,7 @@ const exchangeValues = (data, rate) => {
         _.forEach(section, subsection => {
             _.forEach(subsection.accounts, account => {
                     account.homeValue = account.homeValue || account.value;
-                    account.value = account.homeValue * rate;
+                    account.value = (account.homeValue * rate).toFixed(ROUNDING_DECIMALS);
                 })
             })
     });
