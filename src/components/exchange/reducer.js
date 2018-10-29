@@ -4,15 +4,15 @@ import {fromJS} from "immutable";
 const init = () => fromJS ({
     "date": "2018-10-19",
     "rates": {
-        "CAD": 1.24,
+        "CAD": 1,
         "JPY": 86.3383956647,
         "GBP": 0.5888807118,
         "AUD": 1.0747976183,
-        "USD": 0.9,
-        "EUR": 1,
+        "USD": 1.1,
+        "EUR": 1.34,
         "CHF": 0.7640998194
     },
-    "base": "EUR"
+    "base": "CAD"
 });
 
 const exchangeReducer = (state = init(), action) => {

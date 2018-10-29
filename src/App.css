@@ -24,6 +24,10 @@
   width: 50%;
 }
 
+.Status {
+  float: right;
+}
+
 .Names {
   width: 50%;
 }

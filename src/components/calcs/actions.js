@@ -5,7 +5,7 @@ const baseURL = 'http://localhost:3030';
 
 export const loadData = () => {
     return async (dispatch) => {
-        const response = await getInitial()
+        const response = await getLastCalc()
         
         if(!response.error) {
             dispatch({type: "UPDATE", value: response});
@@ -17,7 +17,7 @@ export const loadData = () => {
     }
 }
 
-export const updateData = () => {
+export const saveData = () => {
     return async (dispatch, getState) => {
         dispatch({type: "SAVING"});
         const response = await patchState(dispatch, getState());
@@ -44,7 +44,7 @@ const patchState = async (dispatch, state) => {
     }
 }
 
-const getInitial = async () => 
+const getLastCalc = async () => 
 {
     const url = baseURL + "/lastCalc";
     try {

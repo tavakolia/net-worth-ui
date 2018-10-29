@@ -7,37 +7,13 @@ const init = () => {
     return fromJS(
     {
         data: {
-            assets: [
-                {
-                    accounts: [
-                        {
-                            _id: 1,
-                            name: "Chequing",
-                            value: 200
-                        }
-                    ],
-                    _id: 5,
-                    accountType: "Cash"
-                }
-            ],
-            liabilities: [
-                {
-                    accounts: [
-                        {
-                            _id: 3,
-                            name: "Debt",
-                            value: 100
-                        }
-                    ],
-                    _id: 4,
-                    accountType: "Long-Term Debts"
-                }
-            ]
+            assets: [],
+            liabilities: []
         },
-        totalAssets: 200,
-        totalLiabilities: 100,
-        netWorth: 100,
-        _id: "6",
+        totalAssets: 0,
+        totalLiabilities: 0,
+        netWorth: 0,
+        _id: "1",
         currency: "GBP"
     });
 };
@@ -46,8 +22,7 @@ const getTemplateAccount = () =>
 {
     return ({
         name: "New Account",
-        value: 0,
-        _id: _.uniqueId("temp")
+        value: 0
     });
 }
 
@@ -147,14 +122,14 @@ const calculateSubTotals = (state) => {
 }
 
 const findEntity = (data, id) => {
-    const accountTypes = _.toArray(data);
-    for (let i=0; i < accountTypes.length; i++) {
-        const accountType = accountTypes[i];
-        if(id === accountType._id) {
-            return accountType;
+    const sections = _.toArray(data);
+    for (let i=0; i < sections.length; i++) {
+        const section = sections[i];
+        if(id === section._id) {
+            return section;
         }
-        for(let j=0; j < accountType.length; j++) {
-            const subsection = accountType[j];
+        for(let j=0; j < section.length; j++) {
+            const subsection = section[j];
             if(subsection._id && id === subsection._id) {
                 return subsection;
             }

@@ -3,7 +3,7 @@ import Subsection from "./Subsection";
 import {connect} from "react-redux";
 import {Glyphicon, Button} from "react-bootstrap";
 import _ from "lodash";
-import {updateData} from "./actions";
+import {saveData} from "./actions";
 
 
 class Section extends Component {
@@ -23,8 +23,9 @@ class Section extends Component {
                         <Glyphicon glyph="plus"/>
                     </Button>
                 </div>
-            {data.toJS().map(account => {
-                return(<Subsection key={account._id} account={account} />);
+            {data.toJS().map(subsection => {
+                addTempIds(subsection);
+                return(<Subsection key={subsection._id} account={subsection} />);
             })}
                 <div className='Section-footer'>
                     Total {header}: {subTotal}
@@ -42,6 +43,16 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
+const addTempIds = (subsection) => {
+    if(subsection && !subsection._id) {
+        subsection._id = _.uniqueId("temp");
+    }
+    const lastAccount = _.last(subsection.accounts);
+    if(lastAccount && !lastAccount._id) {
+        lastAccount._id = _.uniqueId('temp');
+    }
+}
+
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         ...ownProps,
@@ -50,7 +61,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 type: "ADD_SECTION",
                 value: _.lowerCase(ownProps.header)
             });
-            dispatch(updateData());
+            dispatch(saveData());
         }
     };
 };

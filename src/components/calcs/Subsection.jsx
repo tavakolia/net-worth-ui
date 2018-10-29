@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import {connect} from "react-redux";
-import {updateData} from "./actions";
+import {saveData} from "./actions";
 import {Glyphicon, Button} from "react-bootstrap";
 
 class Subsection extends Component {
@@ -97,20 +97,21 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 type: "UPDATE_SUBSECTION",
                 value: row
             });
-            dispatch(updateData());
+            dispatch(saveData());
         },
         renameHeader: (subsection) => {
             dispatch({
                 type: "UPDATE_HEADER",
                 value: subsection
             });
-            dispatch(updateData());
+            dispatch(saveData());
         },
         addAccount: (id) => {
             dispatch({
                 type: "ADD_ACCOUNT",
                 value: id
-            })
+            });
+            dispatch(saveData());
         }
     };
 };
