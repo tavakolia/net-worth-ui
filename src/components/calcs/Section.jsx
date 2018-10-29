@@ -1,20 +1,29 @@
 import React, {Component} from "react";
 import Subsection from "./Subsection";
 import {connect} from "react-redux";
+import {Glyphicon, Button} from "react-bootstrap";
 import _ from "lodash";
+import {updateData} from "./actions";
+
 
 class Section extends Component {
+    handleAddSection = () => {
+        const {addSection} = this.props;
+        addSection();
+    }
+
     render() {
         const {data, header, subTotal} = this.props;
 
         return(
             <div className="Section">
-                <div className='Section-header'>{header}</div>
+                <div className='Section-header'>
+                {header}
+                    <Button className="Add-section" bsSize="xsmall" onClick={this.handleAddSection}>
+                        <Glyphicon glyph="plus"/>
+                    </Button>
+                </div>
             {data.toJS().map(account => {
-                const lastAccount = _.last(account.accounts);
-                if(!lastAccount._id) {
-                    lastAccount._id = _.uniqueId('temp');
-                }
                 return(<Subsection key={account._id} account={account} />);
             })}
                 <div className='Section-footer'>
@@ -33,4 +42,17 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-export default connect(mapStateToProps)(Section);
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        ...ownProps,
+        addSection: () => {
+            dispatch({
+                type: "ADD_SECTION",
+                value: _.lowerCase(ownProps.header)
+            });
+            dispatch(updateData());
+        }
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Section);

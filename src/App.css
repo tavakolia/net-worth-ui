@@ -37,9 +37,17 @@
   font-weight: bold;
 }
 
+.Subsection-header {
+  border: none;
+}
+
 .Section-footer {
   margin-top: 10px;
   font-weight: bold;
+}
+
+.Add-section {
+  margin-left: 5px;
 }
 
 .Net-Worth {

@@ -20,7 +20,8 @@ export const loadData = () => {
 export const updateData = () => {
     return async (dispatch, getState) => {
         dispatch({type: "SAVING"});
-        await patchState(dispatch, getState());
+        const response = await patchState(dispatch, getState());
+        dispatch({type: "UPDATE", value: response});
     }
 }
 

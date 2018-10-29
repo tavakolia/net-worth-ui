@@ -42,28 +42,46 @@ const init = () => {
     });
 };
 
-const templateAccount = {
-    name: "New Account",
-    value: 0
+const getTemplateAccount = () => 
+{
+    return ({
+        name: "New Account",
+        value: 0,
+        _id: _.uniqueId("temp")
+    });
 }
+
+const getTemplateSection = () => {
+    return ({
+        accounts: [],
+        accountType: "Account Type"
+    });
+};
 
 const netWorthReducer = (state = init(), action) => {
     switch (action.type) {
         case "ADD_ACCOUNT":
             return state.merge({
                 ...addTemplateAccount(state.toJS(), action.value)
-            })
+            });
+        case "ADD_SECTION":
+            return state.merge({
+                ...addTemplateSection(state.toJS(), action.value)
+            });
         case "UPDATE_SUBSECTION":
             const updatedSubsection = updateSubSection(state.toJS(), action.value);
             const newState = {
                 ...updatedSubsection,
                 ...calculateSubTotals(state.toJS())
-            }
+            };
             return state.merge(newState);
+        case "UPDATE_HEADER":
+            return state.merge({
+                ...updateHeader(state.toJS(), action.value)
+            });
         case "UPDATE":
             let subTotals = calculateSubTotals(action.value);
             const updatedState = state.merge({
-                // data: exchangeValues(action.value.data, 1),
                 ...subTotals,
                 ...action.value
             });
@@ -73,7 +91,7 @@ const netWorthReducer = (state = init(), action) => {
             return state.merge({
                 ...calculateSubTotals(newData),
                 ...newData
-            })
+            });
         default:
             return state;
     }
@@ -99,8 +117,22 @@ const exchangeValues = (data, rate) => {
 }
 
 const addTemplateAccount = (state, id) => {
-    const account = findAccount(state, id);
-    account.accounts.push(templateAccount);
+    const account = findEntity(state.data, id);
+    account.accounts.push(getTemplateAccount());
+    return state;
+}
+
+const updateHeader = (state, newHeader) => {
+    const account = findEntity(state.data, newHeader._id);
+    if(account) {
+        _.assign(account, newHeader);
+    }
+    return state;
+}
+
+const addTemplateSection = (state, type) => {
+    const sectionType = state.data[type];
+    sectionType.push(getTemplateSection());
     return state;
 }
 
@@ -114,14 +146,23 @@ const calculateSubTotals = (state) => {
     }
 }
 
-const findAccount = (data, id) => {
-    const accountTypes = _.toArray(data.data);
+const findEntity = (data, id) => {
+    const accountTypes = _.toArray(data);
     for (let i=0; i < accountTypes.length; i++) {
         const accountType = accountTypes[i];
+        if(id === accountType._id) {
+            return accountType;
+        }
         for(let j=0; j < accountType.length; j++) {
             const subsection = accountType[j];
-            if(id === subsection._id) {
+            if(subsection._id && id === subsection._id) {
                 return subsection;
+            }
+            for(let k=0; k < subsection.accounts.length; k++) {
+                const account = subsection.accounts[k];
+                if(account._id && id === account._id) {
+                    return account;
+                }
             }
         }
     }
@@ -137,15 +178,13 @@ const getTotal = (data) => {
 }
 
 const updateSubSection = (state, newAccount) => {
-    _.forEach(state.data, (section) => { 
-        _.forEach(section, subsection => {
-            const oldAccount = _.find(subsection.accounts, account => account._id === newAccount._id);
-            if (oldAccount) {
-                _.assign(oldAccount, newAccount);
-            }
-            return;
-        })
-    });
+    let curAccount = findEntity(state.data, newAccount._id);
+    if (curAccount) {
+        _.assign(curAccount, newAccount);
+        if(_.isString(curAccount._id) && curAccount._id.startsWith("temp")) {
+            delete curAccount._id;
+        }
+    };
     return state;
 }
 

@@ -4,9 +4,13 @@ import cellEditFactory from 'react-bootstrap-table2-editor';
 import {connect} from "react-redux";
 import {updateData} from "./actions";
 import {Glyphicon, Button} from "react-bootstrap";
-import _ from "lodash";
 
 class Subsection extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {header: props.account.accountType};
+    };
+
     getColumns = () => {
         const {editable, account: {accountType: header}} = this.props;
 
@@ -15,7 +19,8 @@ class Subsection extends Component {
                 dataField: 'name',
                 text: header,
                 editable,
-                classes: () => 'Names'
+                classes: () => 'Names',
+                headerFormatter: this.nameFormatter
             }, {
                 dataField: 'value',
                 text: 'Amount',
@@ -25,11 +30,32 @@ class Subsection extends Component {
         ]);
     }
 
+    nameFormatter = () => {
+        const {header} = this.state;
+        const {editable} = this.props;
+
+        return (
+          <input 
+            value={header}
+            className={'Subsection-header'}
+            onBlur={this.handleRename}
+            onChange={this.handleChangeName}
+            disabled={!editable}/>
+        );
+    }
+
+    handleChangeName = (event) => {
+        this.setState({header: event.target.value});
+    }
+
+    handleRename = () => {
+        const newSubsection = this.props.account;
+        newSubsection.accountType = this.state.header;
+        this.props.renameHeader(newSubsection);
+    }
+
     onEdit = (_oldValue, _newValue, row) => {
         row.homeValue = row.value;
-        if(_.isString(row._id) && row._id.startsWith("temp")) {
-            row = _.omit(row, '_id');
-        }
         this.props.patchState(row);
     }
 
@@ -56,7 +82,7 @@ class Subsection extends Component {
                     }) }
                 />
                 <Button bsSize="xsmall" onClick={this.handleAddRow}>
-                    <Glyphicon glyph="plus"/>
+                    <Glyphicon glyph="plus-sign"/>
                 </Button>
             </div>
         );
@@ -70,6 +96,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch({
                 type: "UPDATE_SUBSECTION",
                 value: row
+            });
+            dispatch(updateData());
+        },
+        renameHeader: (subsection) => {
+            dispatch({
+                type: "UPDATE_HEADER",
+                value: subsection
             });
             dispatch(updateData());
         },
